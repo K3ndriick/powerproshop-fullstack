@@ -1,6 +1,7 @@
 import { ProductGrid } from '@/components/product/product-grid'
 import { Hero } from '@/components/layout/hero'
 import { CategoryNav } from '@/components/layout/category-nav'
+
 // Mock data - will replace with Supabase later
 const featuredProducts = [
   {
@@ -97,14 +98,14 @@ export default function HomePage() {
       </section>
 
       {/* Repair Services CTA */}
-      <section className="bg-gray-900 text-white py-16">
+      <section className="bg-foreground text-background py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold mb-4">
                 Equipment Repair & Servicing
               </h2>
-              <p className="text-gray-300 mb-6">
+              <p className="text-background/80 mb-6">
                 Professional maintenance and repair services for all types of gym
                 equipment. Keep your gear in peak condition with our expert
                 technicians.
@@ -112,7 +113,7 @@ export default function HomePage() {
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center">
                   <svg
-                    className="w-5 h-5 text-green-400 mr-3"
+                    className="w-5 h-5 text-accent mr-3"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -126,7 +127,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-center">
                   <svg
-                    className="w-5 h-5 text-green-400 mr-3"
+                    className="w-5 h-5 text-accent mr-3"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -140,7 +141,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-center">
                   <svg
-                    className="w-5 h-5 text-green-400 mr-3"
+                    className="w-5 h-5 text-accent mr-3"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -155,16 +156,16 @@ export default function HomePage() {
               </ul>
               <a
                 href="/appointments"
-                className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
+                className="inline-block bg-background text-foreground px-8 py-3 rounded-md font-medium hover:bg-background/90 transition-colors"
               >
                 Book Service Appointment
               </a>
             </div>
             <div className="hidden md:block">
-              <div className="bg-gray-800 rounded-lg p-8 text-center">
+              <div className="bg-background/10 border border-background/20 rounded-lg p-8 text-center">
                 <div className="text-6xl mb-4">🔧</div>
                 <p className="text-xl font-semibold mb-2">Expert Repairs</p>
-                <p className="text-gray-400">Treadmills • Bikes • Weights</p>
+                <p className="text-background/70">Treadmills • Bikes • Weights</p>
               </div>
             </div>
           </div>
