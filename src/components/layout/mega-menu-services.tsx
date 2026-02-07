@@ -11,8 +11,8 @@ export function MegaMenuServices() {
     <MegaMenuContainer>
       <MegaMenuGrid 
         columns={servicesMenuData.columns} 
-        centered={true}
-        maxWidth="lg"
+        centered={false}
+        maxWidth="full"
       />
     </MegaMenuContainer>
   )
