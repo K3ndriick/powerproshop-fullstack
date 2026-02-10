@@ -274,3 +274,44 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   // Component can check: if (!product) return <NotFound />
   return data
 }
+
+/**
+ * Get featured products for homepage hero section
+ * @param limit - Number of products to return (default: 6)
+ */
+export async function getFeaturedProducts(limit: number = 6): Promise<Product[]> {
+  const supabase = await createClient()
+  
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('featured', true)          // Only featured products
+    .is('deleted_at', null)
+    .eq('in_stock', true)          // Don't show out-of-stock on homepage
+    .order('created_at', { ascending: false })  // Newest first
+    .limit(limit)
+  
+  if (error) throw new Error('Failed to fetch featured products')
+  
+  return data || []
+}
+
+/**
+ * Search products by text query
+ * Dedicated function for search - simpler than getProducts with all filters
+ */
+export async function searchProducts(query: string): Promise<Product[]> {
+  const supabase = await createClient()
+  
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .textSearch('search_vector', query)  // Full-text search
+    .is('deleted_at', null)
+    .eq('in_stock', true)                // Only show in-stock in search
+    .limit(20)                           // Reasonable limit for search results
+  
+  if (error) throw new Error('Failed to search products')
+  
+  return data || []
+}
