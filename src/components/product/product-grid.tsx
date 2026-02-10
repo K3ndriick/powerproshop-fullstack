@@ -1,17 +1,7 @@
 'use client';
 
 import { ProductCard } from './product-card';
-
-type Product = {
-  id: string
-  name: string
-  slug: string
-  price: number
-  image: string
-  category: string
-  rating: number
-  inStock: boolean
-}
+import type { Product } from '@/lib/types/products';
 
 type ProductGridProps = {
   products: Product[]
