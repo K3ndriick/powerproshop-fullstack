@@ -1,123 +1,102 @@
-'use client'
+'use client';
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { Star, ShoppingCart } from 'lucide-react'
+import Link from 'next/link';
+import Image from 'next/image';
+import { Badge } from '@/components/ui/badge';
+import type { Product } from '@/lib/types/products';
 
-type Product = {
-  id: string
-  name: string
-  slug: string
-  price: number
-  salePrice?: number
-  image: string
-  category: string
-  rating: number
-  reviewCount: number
-  inStock: boolean
+interface ProductCardProps {
+  product: Product
 }
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }: ProductCardProps) {
+  // Calculate if product is on sale
+  const isOnSale = (product.sale_price == null ? false : true );
+  
+  // Determine which price to display
+  const displayPrice = (isOnSale ? product.sale_price: product.price);
+  
+  // Calculate discount percentage (if on sale)
+  // Only calculate if isOnSale is true
+  const discountPercent = isOnSale && product.sale_price
+    ? ((product.price - product.sale_price) / product.price) * 100
+    : 0
+  
   return (
-    <Link
+    <Link 
       href={`/products/${product.slug}`}
-      className="group block bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+      className="group block border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
     >
-      {/* Image */}
-      <div className="aspect-square relative bg-secondary overflow-hidden">
-        {/* Placeholder - replace with real image */}
-        <div className="w-full h-full bg-secondary flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-          <span className="text-6xl opacity-30">🏋️</span>
-        </div>
-        
-        {/* Badges */}
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
-          {!product.inStock && (
-            <span className="bg-muted text-muted-foreground text-xs font-bold px-3 py-1 rounded-full">
+      {/* Product Image - 80% of card space (Design Rule #2) */}
+      <div className="aspect-square bg-muted overflow-hidden relative">
+        {!product.in_stock && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
+            <span className="text-white font-semibold text-lg">
               OUT OF STOCK
             </span>
-          )}
-          {product.salePrice && (
-            <span className="bg-destructive text-destructive-foreground text-xs font-bold px-3 py-1 rounded-full">
-              SALE
-            </span>
-          )}
+          </div>
+        )}
+
+        {/* Product Image */}
+        <Image
+          src={product.primary_image || product.images?.[0] || '/placeholder-product.jpg'}
+          alt={product.name}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+
+        {/* Sale Badge - Top Right */}
+        {isOnSale && (
+          <div className="absolute top-4 right-4 z-20">
+            <Badge className="bg-destructive text-destructive-foreground">
+              SAVE {Math.round(discountPercent)}%
+            </Badge>
+          </div>
+        )}
+
+
+        {/* Category Badge - Top Left */}
+        <div className="absolute top-4 left-4 z-20">
+          <Badge className="bg-accent text-accent-foreground uppercase text-xs">
+            {product.category}
+          </Badge>
         </div>
       </div>
 
-      {/* Content */}
+      {/* Product Info - 20% of card space (Design Rule #2) */}
       <div className="p-4">
-        {/* Category */}
-        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-          {product.category}
-        </p>
-        
-        {/* Title */}
-        <h3 className="font-semibold text-card-foreground line-clamp-2 mb-2">
+        {/* Product Name */}
+        <h3 className="font-semibold text-lg line-clamp-2 mb-2">
           {product.name}
         </h3>
-        
-        {/* Rating */}
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 ${
-                  i < Math.floor(product.rating)
-                    ? 'fill-accent text-accent'
-                    : 'fill-muted text-muted'
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-sm text-muted-foreground">
-            ({product.reviewCount})
+
+        {/* Price Section */}
+        <div className="flex items-center gap-2">
+          {/* Current/Sale Price */}
+          <span className="text-2xl font-bold">
+            ${displayPrice}
           </span>
-        </div>
 
-        {/* Price & Action */}
-        <div className="flex items-center justify-between">
-          <div>
-            {product.salePrice ? (
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-destructive">
-                  ${product.salePrice.toFixed(2)}
-                </span>
-                <span className="text-sm text-muted-foreground line-through">
-                  ${product.price.toFixed(2)}
-                </span>
-              </div>
-            ) : (
-              <span className="text-2xl font-bold text-card-foreground">
-                ${product.price.toFixed(2)}
-              </span>
-            )}
-          </div>
-
-          {/* Add to Cart Button - BLACK, not accent! */}
-          {product.inStock ? (
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                // TODO: Add to cart
-                alert('Add to cart')
-              }}
-              className="bg-primary text-primary-foreground p-2 rounded-md hover:bg-primary/90 transition-colors"
-              aria-label="Add to cart"
-            >
-              <ShoppingCart className="w-5 h-5" />
-            </button>
-          ) : (
-            <button
-              disabled
-              className="bg-muted text-muted-foreground p-2 rounded-md cursor-not-allowed"
-              aria-label="Out of stock"
-            >
-              <ShoppingCart className="w-5 h-5" />
-            </button>
+          {/* Original Price (crossed out if on sale) */}
+          {/* TODO: Only show original price if product is on sale */}
+          {isOnSale && (
+            <span className="text-sm text-muted-foreground line-through">
+              ${product.price}
+            </span>
           )}
+
         </div>
+
+        {/* Stock Status */}
+        <p className="text-sm text-muted-foreground mt-2">
+          {!product.in_stock ? (
+            "Out of stock"
+          ) : product.stock_quantity < product.low_stock_threshold ? (
+            `Only ${product.stock_quantity} left!`
+          ) : (
+            "In stock"
+          )}
+        </p>
       </div>
     </Link>
   )
