@@ -7,6 +7,7 @@ type MenuLink = {
 
 type MenuColumn = {
   title: string
+  titleHref?: string  // ← Add this
   links: MenuLink[]
 }
 
@@ -53,6 +54,7 @@ export function MegaMenuGrid({
           <MegaMenuColumn 
             key={column.title}
             title={column.title}
+            titleHref={column.titleHref}
             links={column.links}
           />
         ))}
