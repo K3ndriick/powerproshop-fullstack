@@ -224,3 +224,53 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
   // Type assertion ensures TypeScript knows this is Product[]
   return data || []
 }
+
+
+
+/**
+ * Get a single product by its URL slug
+ * 
+ * Used for product detail pages (/products/[slug])
+ * 
+ * @param {string} slug - URL-friendly product identifier (e.g., 'commercial-treadmill-pro-3000')
+ * @returns {Promise<Product | null>} Product if found, null if not found or deleted
+ * @throws {Error} If database query fails (network error, etc.)
+ * 
+ * @example
+ * // In product detail page:
+ * const product = await getProductBySlug('commercial-treadmill-pro-3000')
+ * if (!product) {
+ *   return <NotFound />
+ * }
+ * return <ProductDetail product={product} />
+ */
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const supabase = await createClient()
+  
+  /**
+   * Query: SELECT * FROM products 
+   *        WHERE slug = $1 AND deleted_at IS NULL
+   *        LIMIT 1
+   * 
+   * .maybeSingle() expects 0 or 1 rows:
+   * - Returns null if no match found
+   * - Returns Product if found
+   * - Throws error if multiple matches (shouldn't happen - slug is UNIQUE)
+   */
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('slug', slug)              // WHERE slug = 'commercial-treadmill-pro-3000'
+    .is('deleted_at', null)        // AND deleted_at IS NULL (exclude soft-deleted)
+    .maybeSingle()                 // Expect 0 or 1 result (no error if 0)
+  
+  // Handle database errors (not "not found" - that returns null)
+  if (error) {
+    console.error(`Error fetching product with slug "${slug}":`, error)
+    throw new Error(`Failed to fetch product: ${error.message}`)
+  }
+  
+  // Returns Product if found, null if not found
+  // Component can check: if (!product) return <NotFound />
+  return data
+}
