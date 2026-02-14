@@ -16,19 +16,6 @@ const SORT_OPTIONS: { value: ProductSortOption; label: string }[] = [
   { value: 'name-desc', label: 'Name: Z-A' },
 ]
 
-/**
- * 🎯 TODO: Complete the ProductSort component
- * 
- * Steps:
- * 1. Get the current sortBy value from the store
- * 2. Get the setSortBy action from the store
- * 3. Wire them to the Select component
- * 
- * Hints:
- * - Use useFilterStore with a selector
- * - Remember the pattern: useFilterStore(state => state.something)
- * - Select needs: value, onValueChange props
- */
 export function ProductSort() {
   // 🎯 TODO 1: Get current sortBy value from Zustand store
   // Hint: const sortBy = useFilterStore(???)
