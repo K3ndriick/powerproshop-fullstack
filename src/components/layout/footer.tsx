@@ -10,7 +10,7 @@ export function Footer() {
             <div className="flex items-center space-x-2 mb-4">
               <span className="text-2xl">💪</span>
               <span className="text-xl font-bold text-background">
-                GymProShop
+                PowerProShop
               </span>
             </div>
             <p className="text-sm text-background/70 mb-4">
@@ -134,7 +134,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-background/20">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-background/60">
-              © 2024 GymProShop. All rights reserved.
+              © 2026 PowerProShop. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
