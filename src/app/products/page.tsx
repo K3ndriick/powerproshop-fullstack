@@ -1,19 +1,21 @@
-// app/products/page.tsx
-import { getProducts } from '@/lib/actions/products'
-import { ProductCard } from '@/components/products/product-card'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
-import { generateProductBreadcrumbs } from '@/lib/utils/breadcrumbs'
-import type { ProductCategory } from '@/lib/types/products'
+import { getProducts } from '@/lib/actions/products';
+import { FilteredProductList } from '@/components/products/filtered-product-list';
+import { ProductFilters } from '@/components/products/product-filters';
+import { ProductSort } from '@/components/products/product-sort';
+import { ProductCard } from '@/components/products/product-card';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { generateProductBreadcrumbs } from '@/lib/utils/breadcrumbs';
+import type { ProductCategory } from '@/lib/types/products';
 
 type SearchParams = {
-  category?: ProductCategory
-  categories?: string
-  search?: string
-  sortBy?: string
-  new_arrival?: string
-  bestseller?: string
-  onSale?: string
-  inStockOnly?: string
+  category?: ProductCategory,
+  categories?: string,
+  search?: string,
+  sortBy?: string,
+  new_arrival?: string,
+  bestseller?: string,
+  onSale?: string,
+  inStockOnly?: string,
 }
 
 type ProductsPageProps = {
@@ -22,9 +24,10 @@ type ProductsPageProps = {
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   // Await searchParams first
-  const params = await searchParams
+  const params = await searchParams;
   
   // Parse URL parameters into filter object
+  // SERVER-SIDE filters (from URL)
   const filters = {
     category: params.category,
     categories: params.categories 
@@ -39,26 +42,27 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   
   const activeFilters = Object.fromEntries(
     Object.entries(filters).filter(([_, value]) => value !== undefined)
-  )
+  );
   
-  const products = await getProducts(activeFilters)
+  // fetch products from DB
+  const products = await getProducts(activeFilters);
   
   // Generate breadcrumbs
-  const breadcrumbs = generateProductBreadcrumbs(params)
+  const breadcrumbs = generateProductBreadcrumbs(params);
   
   // Page title
   const getPageTitle = () => {
-    if (params.new_arrival === 'true') return 'New Arrivals'
-    if (params.bestseller === 'true') return 'Best Sellers'
-    if (params.onSale === 'true') return 'Sale'
+    if (params.new_arrival === 'true') return 'New Arrivals';
+    if (params.bestseller === 'true') return 'Best Sellers';
+    if (params.onSale === 'true') return 'Sale';
     if (params.category) {
-      return params.category.charAt(0).toUpperCase() + params.category.slice(1)
+      return params.category.charAt(0).toUpperCase() + params.category.slice(1);
     }
     if (params.categories) {
-      return 'Equipment'
+      return 'Equipment';
     }
     if (params.search) return `Search: "${params.search}"`
-    return 'All Products'
+    return 'All Products';
   }
   
   return (
@@ -72,7 +76,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </h1>
           
           {/* Breadcrumbs */}
-          <Breadcrumb>
+          <Breadcrumb className="mt-4">
             <BreadcrumbList>
               {breadcrumbs.map((crumb, index) => {
                 const isLast = index === breadcrumbs.length - 1
@@ -95,11 +99,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             </BreadcrumbList>
           </Breadcrumb>
           
-          <p className="mt-4 text-lg text-muted-foreground">
-            Showing {products.length} {products.length === 1 ? 'product' : 'products'}
-          </p>
-          
-          {/* Active Filters */}
+          {/* Server-Side Active Filters (URL-based) */}
           {Object.keys(activeFilters).length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {params.category && (
@@ -121,24 +121,52 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           )}
         </div>
 
-        {/* Product Grid */}
-        {products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+        {/* ==================== MAIN LAYOUT: SIDEBAR + PRODUCTS ==================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          
+          {/* ==================== FILTERS SIDEBAR (Desktop) ==================== */}
+          <aside className="hidden lg:block lg:col-span-1">
+            <div className="sticky top-24">
+              <ProductFilters />
+            </div>
+          </aside>
+
+          {/* ==================== PRODUCTS SECTION ==================== */}
+          <div className="lg:col-span-3">
+            
+            {/* Controls Bar: Count + Sort */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-6 border-b">
+              {/* Product Count */}
+              <p className="text-lg text-muted-foreground">
+                {products.length} {products.length === 1 ? 'product' : 'products'}
+              </p>
+
+              {/* Sort Dropdown */}
+              <ProductSort />
+            </div>
+
+            {/* Mobile Filters Button (Optional - TODO: Add Sheet/Drawer) */}
+            {/* Uncomment when you want to add mobile filters
+            <div className="lg:hidden mb-6">
+              <Button variant="outline" className="w-full">
+                <Filter className="mr-2 h-4 w-4" />
+                Filters
+              </Button>
+            </div>
+            */}
+
+            {/* Filtered Product Grid */}
+            <FilteredProductList
+              products={products}
+              serverFilters={{
+                category: params.category,
+                search: params.search,
+                onSale: params.onSale === 'true',
+              }}
+            />
+            
           </div>
-        ) : (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground text-lg">No products found.</p>
-            <a 
-              href="/products" 
-              className="inline-block mt-4 text-accent hover:underline"
-            >
-              Clear filters and view all products
-            </a>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )
