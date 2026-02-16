@@ -120,9 +120,9 @@ export function PriceSlider() {
     <div className="space-y-4">
       {/* Header with Reset Button */}
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-foreground">
+        {/* <label className="text-sm font-medium text-foreground">
           Price Range
-        </label>
+        </label> */}
         
         {/* Only show reset if filter is active */}
         {isFiltered && (
@@ -142,7 +142,7 @@ export function PriceSlider() {
         <span className='font-medium text-foregound'>
           {formatPrice(localRange[0])}
         </span>
-        <span className='text-muted-foreground'>to</span>
+        <span className='text-muted-foreground'>{` - `}</span>
         <span className='font-medium text-foreground'>
           {formatPrice(localRange[1])}
         </span>
