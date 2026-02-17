@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { ShoppingCart } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { useCartStore } from '@/store/useCartStore';
 import type { Product } from '@/lib/types/products';
 
 type AddToCartButtonProps = {
@@ -10,63 +13,46 @@ type AddToCartButtonProps = {
 }
 
 export function AddToCartButton({ product, disabled = false }: AddToCartButtonProps) {
-  // ============================================
-  // STATE MANAGEMENT
-  // ============================================
-  
-  // state for loading (when adding to cart)
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // state for success feedback (optional - shows "Added!" briefly)
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const addItem = useCartStore(state => state.addItem);
 
-  // ============================================
-  // EVENT HANDLERS
-  // ============================================
-  
-  const handleAddToCart = async () => {
-    // TODO: Implement add to cart logic
-    // For now (Phase 2B), just console.log the product
-    // Later (Phase 3), we'll integrate with Zustand cart store
-    console.log(product);
-    
-    // Step 1: Set loading state to true
-    setIsLoading(true);
-    
-    // Step 2: Simulate adding to cart (console.log for now)
-    console.log('Adding to cart:', product.name)
-    
-    // Step 3: Simulate API delay (remove this later)
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    // Step 4: Set loading state to false
-    setIsLoading(false);
-    
-    // Step 5: Show success state briefly (optional)
-    setShowSuccess(true);
+  const handleAddToCart = () => {
+    // Implement add to cart
+    //
+    // Steps:
+    // 1. Set isAdding to true
+    //
+    // 2. Call addItem(product, 1) inside a try/catch
+    //    - On success: call toast.success() with a title and description
+    //      e.g. toast.success('Added to cart', { description: product.name })
+    //    - On catch (error): call toast.error() with the error message
+    //      Hint: error instanceof Error ? error.message : 'Failed to add to cart'
+    //
+    // 3. Set isAdding to false in a finally block
+    //    (finally runs whether the try succeeded or the catch ran)
+    //
+    // Note: addItem is synchronous - no await needed, no async on this function
+    setIsAdding(true);
 
-    // Step 6: Reset success state after 2 seconds (optional)
-    setTimeout(() => { setShowSuccess(false); }, 2000);
+    try {
+      addItem(product, 1);
+      toast.success("Added to cart", { description: product.name });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to add to cart');
+    } finally {
+      setIsAdding(false);
+    }
   }
 
-  const getButtonText = () => {
-    if (disabled) return "Out of Stock"
-    if (isLoading) return "Adding..."
-    if (showSuccess) return "Added!"
-    return "Add to Cart"
-  }
-  
-  // ============================================
-  // RENDER
-  // ============================================
   return (
     <Button
       onClick={handleAddToCart}
-      disabled={disabled}
+      disabled={disabled || isAdding}
       className="w-full"
       size="lg"
     >
-      {getButtonText()}    
-</Button>
+      <ShoppingCart className="mr-2 h-4 w-4" />
+      {isAdding ? 'Adding...' : disabled ? 'Out of Stock' : 'Add to Cart'}
+    </Button>
   )
 }
