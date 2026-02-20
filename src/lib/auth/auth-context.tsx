@@ -201,7 +201,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Our /auth/callback route (built later) will handle the code exchange.
     //
     // Set redirectTo to:
-    //   `${window.location.origin}/auth/callback?next=/forgot-password/confirm`
+    //   `${window.location.origin}/auth/callback?next=/forgot-password/confirm`https://mailtrap.io/inboxes/4399031/messages
     //
     // window.location.origin gives the base URL (e.g. 'http://localhost:3000')
     // so the full redirectTo becomes: 'http://localhost:3000/auth/callback?next=/forgot-password/confirm'
