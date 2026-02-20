@@ -21,7 +21,6 @@ export type { User, Session }
 // PROFILE TYPE
 // =============================================================
 // Represents a row in our public.profiles table.
-// Your job: fill in the fields based on the SQL schema you wrote.
 //
 // Rules:
 //   - Field names must exactly match the column names in the DB
@@ -68,6 +67,7 @@ export type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
+  updatePassword: (newPassword: string) => Promise<void>
   updateProfile: (updates: Partial<Profile>) => Promise<void>
   // Partial<Profile> means: an object with any subset of Profile fields
   // e.g. { full_name: 'New Name' } or { phone: '0412345678' }
@@ -77,7 +77,6 @@ export type AuthContextType = {
 // FORM DATA TYPES
 // =============================================================
 // Each auth form collects different data from the user.
-// Your job: define what fields each form needs.
 //
 // Rules:
 //   - All form fields are strings (inputs always return strings)
