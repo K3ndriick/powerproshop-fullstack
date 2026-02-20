@@ -214,6 +214,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const updatePassword = async (newPassword: string) => {
+    // Call supabase.auth.updateUser() to set a new password.
+    //
+    // updateUser() updates the currently authenticated user's account data.
+    // It takes an object - to change the password, pass: { password: newPassword }
+    // The user must already be authenticated (the reset email link handled that via
+    // the /auth/callback route which exchanged the code for a session).
+    //
+    // Same pattern as all other auth methods: destructure { error }, throw if it exists.
+
+    const { error } = await supabase.auth.updateUser( { password: newPassword } );
+
+    if (error) {
+      throw error;
+    }
+  }
+
   const updateProfile = async (updates: Partial<Profile>) => {
     // Update the user's row in the profiles table
     //
@@ -263,6 +280,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signIn,
     signOut,
     resetPassword,
+    updatePassword,
     updateProfile,
   }
 
