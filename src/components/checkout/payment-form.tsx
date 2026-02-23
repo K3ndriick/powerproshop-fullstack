@@ -76,7 +76,56 @@ export const PaymentForm = ({ shippingAddress, paymentIntentId }: Props) => {
   //
   // Wrap steps 4-8 in try/catch - if anything throws, show a toast.error()
   // and set isProcessing back to false
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
+    if (!stripe || !elements || !user) {
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: { return_url: window.location.href },
+        redirect: 'if_required'
+      });
+
+      if (error) {
+        toast.error("Unable to process payment: " + error.message);
+        setIsProcessing(false);
+        return;
+      }
+
+      const order = await createOrder({
+        user_id: user.id,
+        cart_items: items.map((cartItem) => ({
+          product_id: cartItem.productId,
+          product_name: cartItem.name,
+          product_image: cartItem.image,
+          price: cartItem.salePrice ?? cartItem.price,
+          quantity: cartItem.quantity
+        })),
+        shipping_address: shippingAddress,
+        subtotal: subtotal,
+        tax: tax,
+        shipping: shipping,
+        total: total,
+        stripe_payment_intent_id: paymentIntentId
+      })
+
+      clearCart();
+      router.push(`/checkout/success?order_id=${order.id}`);
+
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Unable to process payment");
+      }
+      setIsProcessing(false);
+      return;
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 border">
