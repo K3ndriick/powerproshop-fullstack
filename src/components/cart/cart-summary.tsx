@@ -14,6 +14,7 @@
  *   <CartSummary />
  */
 
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCartStore } from '@/store/useCartStore';
@@ -68,9 +69,9 @@ export function CartSummary() {
         <span>${total.toFixed(2)}</span>
       </div>
 
-      {/* Checkout button - links to /checkout (Phase 5) */}
-      <Button className="w-full" size="lg">
-        Proceed to Checkout
+      {/* Checkout button */}
+      <Button className="w-full" size="lg" asChild>
+        <Link href="/checkout">Proceed to Checkout</Link>
       </Button>
     </div>
   )
