@@ -28,9 +28,9 @@ const shippingSchema = z.object({
   email: z.string().email('Enter a valid email'),
   phone: z.string().min(6, 'Phone is required'),
   address_line1: z.string().min(5, 'Address is required'),
-  address_line2: z.string().optional(),
+  address_line2: z.string().nullable(),
   city: z.string().min(2, 'City is required'),
-  state: z.string().optional(),
+  state: z.string().nullable(),
   postal_code: z.string().min(4, 'Postal code is required'),
   country: z.string().min(2, 'Country is required'),
 })
