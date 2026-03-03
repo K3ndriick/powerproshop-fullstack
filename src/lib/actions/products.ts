@@ -291,7 +291,7 @@ export async function getFeaturedProducts(limit: number = 6): Promise<Product[]>
     .order('created_at', { ascending: false })  // Newest first
     .limit(limit)
   
-  if (error) throw new Error('Failed to fetch featured products')
+  if (error) throw new Error(`Failed to fetch featured products: ${error.message}`);
   
   return data || []
 }
@@ -311,7 +311,7 @@ export async function searchProducts(query: string): Promise<Product[]> {
     .eq('in_stock', true)                // Only show in-stock in search
     .limit(20)                           // Reasonable limit for search results
   
-  if (error) throw new Error('Failed to search products')
+  if (error) throw new Error(`Failed to search products: ${error.message}`);
   
   return data || []
 }
