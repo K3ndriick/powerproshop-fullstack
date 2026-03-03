@@ -127,7 +127,7 @@ export async function RelatedProducts({ currentProduct, limit = 4 }: RelatedProd
  */
 
 
-export async function RelatedProductsScroll({ currentProduct, limit = 4 }) {
+export async function RelatedProductsScroll({ currentProduct, limit = 4 }: { currentProduct: Product, limit?: number}) {
   const relatedProducts = await getRelatedProducts(currentProduct, limit);
 
   if (!relatedProducts || relatedProducts.length === 0) {
