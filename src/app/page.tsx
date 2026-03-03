@@ -3,10 +3,11 @@ import { Hero } from '@/components/layout/hero'
 import { CategoryNav } from '@/components/layout/category-nav'
 import { getFeaturedProducts } from '@/lib/actions/products'
 
-// Mock data - will replace with Supabase later
-const featuredProducts = await getFeaturedProducts(6);
+export default async function HomePage() {
 
-export default function HomePage() {
+  // Mock data - will replace with Supabase later
+  const featuredProducts = await getFeaturedProducts(6);
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
