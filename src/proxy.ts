@@ -57,7 +57,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 // Routes that require the user to be authenticated.
 // Any path that STARTS WITH one of these will be protected.
 // startsWith means /profile/edit is also protected, not just /profile exactly.
-const protectedRoutes = ['/checkout', '/profile', '/orders'];
+const protectedRoutes = ['/checkout', '/profile', '/orders', '/dashboard'];
 
 // Routes that authenticated users shouldn't visit (e.g. no point showing /login to someone logged in).
 // Visiting these while logged in redirects to home.
