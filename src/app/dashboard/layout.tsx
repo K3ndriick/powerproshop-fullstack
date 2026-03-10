@@ -1,7 +1,7 @@
 /**
  * Dashboard Layout
  *
- * Server Component — fetches the current user server-side and passes
+ * Server Component - fetches the current user server-side and passes
  * their name to the DashboardSidebar. The sidebar needs the name but
  * is a Client Component (for usePathname), so we fetch here and pass
  * it down as a prop instead of fetching inside the sidebar.
@@ -32,7 +32,7 @@ export default async function DashboardLayout({
 }) {
 
   // ============================================================
-  // YOUR TASK: Fetch the current user's profile name
+  // Fetch the current user's profile name
   //
   // You need to get the user's full_name to pass to the sidebar.
   //
@@ -42,7 +42,7 @@ export default async function DashboardLayout({
   // Step 2: Get the current user
   //   const { data: { user } } = await supabase.auth.getUser()
   //   proxy.ts guarantees /dashboard routes are protected, so user
-  //   is always non-null here — you can safely use user!
+  //   is always non-null here - you can safely use user
   //
   // Step 3: Fetch their profile row
   //   Query the 'profiles' table for the row where id = user!.id
@@ -51,13 +51,17 @@ export default async function DashboardLayout({
   //   Destructure: const { data: profile } = await supabase...
   //
   // Step 4: Pass profile?.full_name to DashboardSidebar below
-  //   profile?.full_name uses optional chaining — if the query returned
+  //   profile?.full_name uses optional chaining - if the query returned
   //   null for some reason, this safely returns undefined instead of crashing
   // ============================================================
-
-  // TODO: const supabase = ...
-  // TODO: const { data: { user } } = ...
-  // TODO: const { data: profile } = ...
+  
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = await supabase
+  .from('profiles')
+  .select('full_name')
+  .eq('id', user!.id)
+  .single()
 
 
   return (
@@ -70,12 +74,12 @@ export default async function DashboardLayout({
         {/* Two-column layout: sidebar left, content right */}
         <div className="flex flex-col lg:flex-row gap-8">
 
-          {/* Sidebar — pass the fetched name as a prop */}
+          {/* Sidebar - pass the fetched name as a prop */}
           <DashboardSidebar
-            userName={null /* replace null with profile?.full_name ?? null */}
+            userName={profile?.full_name ?? null}
           />
 
-          {/* Main content area — renders the active dashboard page */}
+          {/* Main content area - renders the active dashboard page */}
           <main className="flex-1 min-w-0">
             {children}
           </main>
