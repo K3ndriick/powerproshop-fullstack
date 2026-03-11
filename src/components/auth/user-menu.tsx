@@ -144,14 +144,14 @@ export function UserMenu() {
 
         {/* Navigation items - asChild lets us use Link inside DropdownMenuItem */}
         <DropdownMenuItem asChild>
-          <Link href="/profile" className="cursor-pointer">
+          <Link href="/dashboard/profile" className="cursor-pointer">
             <UserCircle />
             My Profile
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href="/orders" className="cursor-pointer">
+          <Link href="/dashboard/orders" className="cursor-pointer">
             <Package />
             My Orders
           </Link>
