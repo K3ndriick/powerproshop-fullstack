@@ -24,7 +24,7 @@ export const OrderCard = ({ order }: Props) => {
 
   return (
     <Link
-      href={`/orders/${order.id}`}
+      href={`/dashboard/orders/${order.id}`}
       className="block bg-card border p-6 hover:bg-accent/50 transition-colors"
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
