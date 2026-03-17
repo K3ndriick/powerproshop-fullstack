@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react'
 import { ProductGrid } from '@/components/products/product-grid'
 import { Hero } from '@/components/layout/hero'
 import { CategoryNav } from '@/components/layout/category-nav'
@@ -14,7 +15,7 @@ export default async function HomePage() {
       <Hero />
 
       {/* Category Navigation */}
-      <CategoryNav />
+      {/* <CategoryNav /> */}
 
       {/* Featured Products Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -29,9 +30,9 @@ export default async function HomePage() {
           </div>
           <a
             href="/products"
-            className="hidden sm:block text-blue-600 hover:text-blue-700 font-medium"
+            className="hidden sm:flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium"
           >
-            View all products →
+            View all products <ArrowRight className="h-4 w-4" />
           </a>
         </div>
 
