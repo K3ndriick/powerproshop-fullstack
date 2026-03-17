@@ -5,7 +5,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getOrderById } from '@/lib/actions/orders'
-import type { OrderWithItems } from '@/lib/types/order'
 
 type Props = {
   params: Promise<{ id: string }>
@@ -13,11 +12,11 @@ type Props = {
 
 // Maps each order status to a Tailwind colour for the badge
 const statusStyles: Record<string, string> = {
-  pending:    'bg-yellow-100 text-yellow-800',
-  processing: 'bg-blue-100 text-blue-800',
-  shipped:    'bg-purple-100 text-purple-800',
-  delivered:  'bg-green-100 text-green-800',
-  cancelled:  'bg-red-100 text-red-800',
+  pending:    'badge-status-pending',
+  processing: 'badge-status-processing',
+  shipped:    'badge-status-shipped',
+  delivered:  'badge-status-delivered',
+  cancelled:  'badge-status-cancelled',
 }
 
 export default async function OrderDetailPage({ params }: Props) {
