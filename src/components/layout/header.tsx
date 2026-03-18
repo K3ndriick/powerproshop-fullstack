@@ -78,7 +78,7 @@ export function Header() {
               </button>
 
               {/* User Account */}
-              <div className="hidden sm:block">
+              <div className="hidden sm:flex sm:items-center">
                 <UserMenu />
               </div>
 
