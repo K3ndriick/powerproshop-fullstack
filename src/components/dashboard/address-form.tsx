@@ -26,9 +26,9 @@ const addressSchema = z.object({
   city:          z.string().min(1, 'City is required'),
   state:         z.string(),
   postal_code:   z.string().min(4, 'Postal code is required'),
-  country:       z.string().default('AU'),
+  country:       z.string(),
   phone:         z.string(),
-  is_default:    z.boolean().default(false),
+  is_default:    z.boolean(),
 });
 
 type Props = {
