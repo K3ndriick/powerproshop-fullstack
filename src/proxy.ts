@@ -44,6 +44,8 @@
  *   /checkout  - payment flow
  *   /profile   - user account page
  *   /orders    - order history
+ *   /dashboard - empty for now, will be clarified soon
+ *   /admin     - all admin pages
  *
  * --- Auth routes (redirect away if already logged in) ---
  *   /login
@@ -57,7 +59,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 // Routes that require the user to be authenticated.
 // Any path that STARTS WITH one of these will be protected.
 // startsWith means /profile/edit is also protected, not just /profile exactly.
-const protectedRoutes = ['/checkout', '/profile', '/orders', '/dashboard'];
+const protectedRoutes = ['/checkout', '/profile', '/orders', '/dashboard', '/admin'];
 
 // Routes that authenticated users shouldn't visit (e.g. no point showing /login to someone logged in).
 // Visiting these while logged in redirects to home.
