@@ -13,7 +13,7 @@ import { createAdminClient } from '../supabase/admin';
 // OFFICIAL STRIPE DOCS: https://docs.stripe.com/api/payment_intents/create
 
 // new shapes for storing pending orders
-type PendingCartItem = {
+export type PendingCartItem = {
   product_id: string
   product_name: string
   product_image: string | null
