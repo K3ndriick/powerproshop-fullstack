@@ -57,6 +57,7 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
     .single();
 
   if (order) {
+    await supabase.from('pending_orders').delete().eq('payment_intent_id', paymentIntent.id);
     return; // return early
   }
 
