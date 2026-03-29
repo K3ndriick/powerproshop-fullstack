@@ -126,7 +126,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
             Continue Shopping
           </Link>
           <Link
-            href="/orders"
+            href="/dashboard/orders"
             className="flex-1 text-center bg-primary text-primary-foreground px-6 py-3 text-sm font-medium hover:bg-primary/90 transition-colors"
           >
             View My Orders
