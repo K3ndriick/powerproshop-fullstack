@@ -12,17 +12,14 @@ type Props = {
   adminUserId: string;
 };
 
-// Valid transitions for each non-terminal status
-const TRANSITIONS: Record<'pending' | 'ordered', { value: PurchaseOrderStatus; label: string }[]> = {
-  pending: [
-    { value: 'ordered',   label: 'Ordered'   },
-    { value: 'cancelled', label: 'Cancelled' },
-  ],
-  ordered: [
-    { value: 'received',  label: 'Received'  },
-    { value: 'cancelled', label: 'Cancelled' },
-  ],
-};
+// All selectable statuses - excludes the current status and terminal states
+// that can no longer be transitioned away from.
+const ALL_OPTIONS: { value: PurchaseOrderStatus; label: string }[] = [
+  { value: 'pending',   label: 'Pending'   },
+  { value: 'ordered',   label: 'Ordered'   },
+  { value: 'received',  label: 'Received'  },
+  { value: 'cancelled', label: 'Cancelled' },
+];
 
 export function PoActionsForm({ poId, currentStatus, adminUserId }: Props) {
   const router = useRouter();
@@ -32,7 +29,8 @@ export function PoActionsForm({ poId, currentStatus, adminUserId }: Props) {
     return null;
   }
 
-  const options = TRANSITIONS[currentStatus];
+  // Show all options except the current status
+  const options = ALL_OPTIONS.filter((opt) => opt.value !== currentStatus);
 
   const [selected, setSelected] = useState<PurchaseOrderStatus>(options[0].value);
   const [loading,  setLoading]  = useState(false);
