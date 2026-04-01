@@ -1,5 +1,5 @@
 // Server-only Stripe SDK instance.
-// Import this ONLY in server actions and API routes — never in client components.
+// Import this ONLY in server actions and API routes - never in client components.
 // The secret key must never reach the browser.
 
 import Stripe from 'stripe';

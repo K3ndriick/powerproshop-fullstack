@@ -12,11 +12,11 @@ type CartItemForReservation = {
 //
 // Calls the reserve_stock RPC once per cart item, sequentially.
 // Sequential (not parallel) because the RPC acquires a row lock
-// on the products table — processing one at a time avoids any
+// on the products table - processing one at a time avoids any
 // chance of deadlock if the same product ever appears twice.
 //
 // Returns null on success.
-// Returns an error string if any item has insufficient stock —
+// Returns an error string if any item has insufficient stock -
 // at that point the caller should stop checkout.
 //
 // Reservations that were already written before a failure will

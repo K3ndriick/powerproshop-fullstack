@@ -21,7 +21,7 @@ export type CartItem = {
   // -- Quantity management --
   quantity: number      // How many the customer wants
   stock: number         // Available stock at add-time (used for max enforcement)
-  maxQuantity: number   // Math.min(stock, 10) — the ceiling we enforce
+  maxQuantity: number   // Math.min(stock, 10) - the ceiling we enforce
 
   // -- Metadata --
   addedAt: string       // ISO timestamp string
