@@ -1,6 +1,23 @@
 import Link from 'next/link';
 // eslint-disable-next-line @typescript-eslint/no-deprecated
-import { Github, Globe } from 'lucide-react';
+import { Github, Globe, Layers } from 'lucide-react';
+import {
+  siNextdotjs,
+  siTypescript,
+  siSupabase,
+  siStripe,
+  siTailwindcss,
+  siShadcnui,
+  siMailtrap,
+} from 'simple-icons';
+
+function BrandIcon({ path }: { path: string }) {
+  return (
+    <svg role="img" viewBox="0 0 24 24" className="w-6 h-6 fill-current shrink-0" aria-hidden="true">
+      <path d={path} />
+    </svg>
+  );
+}
 
 export default function DemoPage() {
   return (
@@ -20,46 +37,69 @@ export default function DemoPage() {
 
           <div className="border-t pt-8 space-y-4">
             <h2 className="font-semibold text-lg">What was built</h2>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex gap-2"><span className="text-foreground font-medium shrink-0">E-commerce</span> - product catalog, filtering, cart, Stripe checkout, order history</li>
-              <li className="flex gap-2"><span className="text-foreground font-medium shrink-0">Auth</span> - email/password login, signup, password reset via Supabase Auth</li>
-              <li className="flex gap-2"><span className="text-foreground font-medium shrink-0">Appointments</span> - service catalog, real-time slot availability, online booking, email confirmations</li>
-              <li className="flex gap-2"><span className="text-foreground font-medium shrink-0">Dashboard</span> - order history, appointment management, saved addresses, profile settings</li>
-              <li className="flex gap-2"><span className="text-foreground font-medium shrink-0">Admin</span> - analytics, product CRUD, order management, appointment queue, review moderation</li>
-              <li className="flex gap-2"><span className="text-foreground font-medium shrink-0">Inventory</span> - stock adjustments, audit log, suppliers, purchase orders, checkout reservations</li>
-            </ul>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { label: 'E-commerce',   desc: 'Product catalog, filtering, cart, Stripe checkout, order history' },
+                { label: 'Auth',         desc: 'Email/password login, signup, and password reset via Supabase Auth' },
+                { label: 'Appointments', desc: 'Service catalog, real-time slot availability, online booking, email confirmations' },
+                { label: 'Dashboard',    desc: 'Order history, appointment management, saved addresses, profile settings' },
+                { label: 'Admin',        desc: 'Analytics, product CRUD, order management, appointment queue, review moderation' },
+                { label: 'Inventory',    desc: 'Stock adjustments, audit log, suppliers, purchase orders, checkout reservations' },
+              ].map(({ label, desc }) => (
+                <div key={label} className="border p-4 space-y-1">
+                  <p className="text-sm font-semibold">{label}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="border-t pt-8 space-y-4">
             <h2 className="font-semibold text-lg">Tech stack</h2>
-            <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-              <span>Next.js 16 (App Router)</span>
-              <span>TypeScript</span>
-              <span>Supabase (PostgreSQL + Auth)</span>
-              <span>Stripe Payments</span>
-              <span>Tailwind CSS v3</span>
-              <span>shadcn/ui + Radix</span>
-              <span>Zustand</span>
-              <span>Nodemailer (Mailtrap)</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: 'Next.js 16 (App Router)',      href: 'https://nextjs.org/docs',           icon: <BrandIcon path={siNextdotjs.path} /> },
+                { label: 'TypeScript',                   href: 'https://www.typescriptlang.org',    icon: <BrandIcon path={siTypescript.path} /> },
+                { label: 'Supabase (PostgreSQL + Auth)', href: 'https://supabase.com/docs',         icon: <BrandIcon path={siSupabase.path} /> },
+                { label: 'Stripe Payments',              href: 'https://stripe.com/docs',           icon: <BrandIcon path={siStripe.path} /> },
+                { label: 'Tailwind CSS v3',              href: 'https://v3.tailwindcss.com',        icon: <BrandIcon path={siTailwindcss.path} /> },
+                { label: 'shadcn/ui + Radix',            href: 'https://ui.shadcn.com',             icon: <BrandIcon path={siShadcnui.path} /> },
+                { label: 'Zustand',                      href: 'https://zustand-demo.pmnd.rs',      icon: <Layers className="w-6 h-6 shrink-0" /> },
+                { label: 'Nodemailer (Mailtrap)',         href: 'https://nodemailer.com',            icon: <BrandIcon path={siMailtrap.path} /> },
+              ].map(({ label, href, icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border p-4 flex flex-col gap-3 hover:bg-muted transition-colors"
+                >
+                  {icon}
+                  <p className="text-sm text-muted-foreground">{label}</p>
+                </a>
+              ))}
             </div>
           </div>
 
           <div className="border-t pt-8 space-y-4">
             <h2 className="font-semibold text-lg">Pages not yet built</h2>
-            <p className="text-sm text-muted-foreground">
-              The following pages are intentionally out of scope for this build and would be completed pre-launch
-              for a real deployment: Contact, FAQ, Shipping &amp; Returns, Privacy Policy, Terms of Service, Cookie Policy.
-            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {['Contact', 'FAQ', 'Shipping & Returns', 'Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((page) => (
+                <div key={page} className="border p-4">
+                  <p className="text-sm text-muted-foreground">{page}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="border-t pt-8 space-y-4">
             <h2 className="font-semibold text-lg">Built by</h2>
             <p className="text-sm text-muted-foreground">
-              Kendriick - self-taught developer building full-stack web applications with Next.js, TypeScript, and Supabase.
+              Kendrick
             </p>
             <div className="flex flex-wrap gap-3">
               <a
-                href="https://github.com/kenjc"
+                href="https://github.com/K3ndriick"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
@@ -68,7 +108,7 @@ export default function DemoPage() {
                 GitHub
               </a>
               <a
-                href="https://yourportfolio.com"
+                href="https://kendrick-lee.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 border px-4 py-2.5 text-sm font-medium hover:bg-muted transition-colors"
