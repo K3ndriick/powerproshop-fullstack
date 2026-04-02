@@ -4,11 +4,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminOrder } from "@/lib/types";
 import { OrderWithItems } from "@/lib/types";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth/admin-check";
 
 const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as const;
 type OrderStatus = typeof ORDER_STATUSES[number];
 
 export async function getAdminOrders(): Promise<AdminOrder[]> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -29,6 +31,7 @@ export async function getAdminOrders(): Promise<AdminOrder[]> {
 }
 
 export async function getAdminOrderById(id: string): Promise<OrderWithItems> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -46,6 +49,7 @@ export async function getAdminOrderById(id: string): Promise<OrderWithItems> {
 }
 
 export async function updateOrderStatus(id: string, status: OrderStatus): Promise<string | null> {
+  await requireAdmin();
   if (!ORDER_STATUSES.includes(status)) return 'Invalid status';
   
   const supabase = createAdminClient();

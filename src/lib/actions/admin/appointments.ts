@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import type { AppointmentWithService, AppointmentStatus } from '@/lib/types/appointment';
+import { requireAdmin } from '@/lib/auth/admin-check';
 
 // ============================================================
 // VALID STATUS TRANSITIONS (state machine)
@@ -32,6 +33,7 @@ const VALID_TRANSITIONS: Record<AppointmentStatus, AppointmentStatus[]> = {
 // ============================================================
 
 export async function getAdminAppointments(): Promise<AppointmentWithService[]> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -57,6 +59,7 @@ export async function getAdminAppointments(): Promise<AppointmentWithService[]> 
 // ============================================================
 
 export async function updateAppointmentStatus(appointmentId: string, newStatus: AppointmentStatus): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   // Fetch current status to validate the transition

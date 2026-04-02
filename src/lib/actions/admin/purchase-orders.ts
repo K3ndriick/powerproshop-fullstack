@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import type { PurchaseOrderWithSupplier, PurchaseOrderWithDetails, CreatePurchaseOrderInput, PurchaseOrderStatus } from '@/lib/types';
+import { requireAdmin } from '@/lib/auth/admin-check';
 
 // ============================================================
 // GET ALL PURCHASE ORDERS
@@ -11,6 +12,7 @@ import type { PurchaseOrderWithSupplier, PurchaseOrderWithDetails, CreatePurchas
 // ============================================================
 
 export async function getAllPurchaseOrders(status?: PurchaseOrderStatus): Promise<PurchaseOrderWithSupplier[]> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   let query = supabase
@@ -39,6 +41,7 @@ export async function getAllPurchaseOrders(status?: PurchaseOrderStatus): Promis
 // ============================================================
 
 export async function getPurchaseOrderById(id: string): Promise<PurchaseOrderWithDetails> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -62,6 +65,7 @@ export async function getPurchaseOrderById(id: string): Promise<PurchaseOrderWit
 // ============================================================
 
 export async function createPurchaseOrder(input: CreatePurchaseOrderInput, adminUserId: string): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   // Insert the PO header
@@ -110,6 +114,7 @@ export async function createPurchaseOrder(input: CreatePurchaseOrderInput, admin
 // ============================================================
 
 export async function updatePurchaseOrderStatus(id: string, status: Extract<PurchaseOrderStatus, 'ordered' | 'cancelled'>): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { error } = await supabase
@@ -135,6 +140,7 @@ export async function updatePurchaseOrderStatus(id: string, status: Extract<Purc
 // ============================================================
 
 export async function receivePurchaseOrder(id: string, adminUserId: string): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { error } = await supabase.rpc('receive_purchase_order', {

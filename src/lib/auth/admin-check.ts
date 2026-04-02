@@ -27,5 +27,12 @@ export async function checkIsAdmin() {
   } 
   
   return (data?.role === "admin") ? true : false;
-  
+
+}
+
+// Throws if the caller is not an admin.
+// Use this at the top of every admin server action.
+export async function requireAdmin() {
+  const isAdmin = await checkIsAdmin();
+  if (!isAdmin) throw new Error('Unauthorized');
 }

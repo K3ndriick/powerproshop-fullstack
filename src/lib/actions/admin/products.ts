@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminProduct, OrderItem, Product } from "@/lib/types";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth/admin-check";
 
 // Input type mirrors the products table fields that can be set via the form
 type ProductData = {
@@ -22,6 +23,7 @@ type ProductData = {
 }
 
 export async function getAllProducts(): Promise<AdminProduct[]> {
+  await requireAdmin();
   const supabase = createAdminClient();
   
   const { data, error } = await supabase
@@ -38,6 +40,7 @@ export async function getAllProducts(): Promise<AdminProduct[]> {
 }
 
 export async function getAdminProductById(id: string): Promise<Product> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -55,6 +58,7 @@ export async function getAdminProductById(id: string): Promise<Product> {
 }
 
 export async function createProduct(inputData: ProductData): Promise<Product> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -101,6 +105,7 @@ export async function createProduct(inputData: ProductData): Promise<Product> {
 }
 
 export async function updateProduct(id: string, input: Partial<ProductData>): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { error } = await supabase
@@ -121,6 +126,7 @@ export async function updateProduct(id: string, input: Partial<ProductData>): Pr
 
 
 export async function deleteProduct(id: string): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { error } = await supabase
@@ -145,6 +151,7 @@ export async function deleteProduct(id: string): Promise<string | null> {
 }
 
 export async function updateStock(id: string, newStockQuantity: number, newLowStockThreshold: number): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { error } = await supabase

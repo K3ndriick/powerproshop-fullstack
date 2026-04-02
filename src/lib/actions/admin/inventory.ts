@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import type { StockAdjustmentWithProduct, CreateStockAdjustmentInput, AdminProduct } from '@/lib/types';
+import { requireAdmin } from '@/lib/auth/admin-check';
 
 // ============================================================
 // GET LOW STOCK PRODUCTS
@@ -11,6 +12,7 @@ import type { StockAdjustmentWithProduct, CreateStockAdjustmentInput, AdminProdu
 // ============================================================
 
 export async function getLowStockProducts(): Promise<AdminProduct[]> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   // Supabase JS doesn't support column-to-column comparisons (.lte only accepts
@@ -37,6 +39,7 @@ export async function getLowStockProducts(): Promise<AdminProduct[]> {
 // ============================================================
 
 export async function getOutOfStockProducts(): Promise<AdminProduct[]> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -61,6 +64,7 @@ export async function getOutOfStockProducts(): Promise<AdminProduct[]> {
 // ============================================================
 
 export async function getStockAdjustments(productId?: string): Promise<StockAdjustmentWithProduct[]> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   let query = supabase
@@ -91,6 +95,7 @@ export async function getStockAdjustments(productId?: string): Promise<StockAdju
 // ============================================================
 
 export async function createStockAdjustment(input: CreateStockAdjustmentInput, adminUserId: string): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   // Fetch current stock so we can compute previous/new quantities

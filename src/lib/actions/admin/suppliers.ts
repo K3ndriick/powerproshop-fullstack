@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import type { Supplier, CreateSupplierInput } from '@/lib/types';
+import { requireAdmin } from '@/lib/auth/admin-check';
 
 // ============================================================
 // GET ALL SUPPLIERS
@@ -10,6 +11,7 @@ import type { Supplier, CreateSupplierInput } from '@/lib/types';
 // ============================================================
 
 export async function getAllSuppliers(): Promise<Supplier[]> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -31,6 +33,7 @@ export async function getAllSuppliers(): Promise<Supplier[]> {
 // ============================================================
 
 export async function getSupplierById(id: string): Promise<Supplier> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -53,6 +56,7 @@ export async function getSupplierById(id: string): Promise<Supplier> {
 // ============================================================
 
 export async function createSupplier(input: CreateSupplierInput): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { error } = await supabase.from('suppliers').insert({
@@ -76,6 +80,7 @@ export async function createSupplier(input: CreateSupplierInput): Promise<string
 // ============================================================
 
 export async function updateSupplier(id: string,input: Partial<CreateSupplierInput>): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { error } = await supabase
@@ -96,6 +101,7 @@ export async function updateSupplier(id: string,input: Partial<CreateSupplierInp
 // ============================================================
 
 export async function toggleSupplierActive(id: string, active: boolean): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { error } = await supabase

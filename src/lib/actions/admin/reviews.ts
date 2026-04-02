@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import type { ReviewWithProfile, ReviewStatus } from '@/lib/types/review';
+import { requireAdmin } from '@/lib/auth/admin-check';
 
 const VALID_TRANSITIONS: Record<ReviewStatus, ReviewStatus[]> = {
   pending:  ['approved', 'rejected'],
@@ -17,6 +18,7 @@ const VALID_TRANSITIONS: Record<ReviewStatus, ReviewStatus[]> = {
 // ============================================================
 
 export async function getAdminReviews(): Promise<ReviewWithProfile[]> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data: reviews, error } = await supabase
@@ -55,6 +57,7 @@ export async function getAdminReviews(): Promise<ReviewWithProfile[]> {
 // ============================================================
 
 export async function moderateReview(reviewId: string,newStatus: 'approved' | 'rejected',moderatorId: string): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   // Fetch current review to validate the status transition

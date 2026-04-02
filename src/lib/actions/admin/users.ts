@@ -1,11 +1,13 @@
 'use server';
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/auth/admin-check";
 
 const PROFILE_ROLES = ['admin', 'customer'] as const;
 type ProfileRoles = typeof PROFILE_ROLES[number];
 
 export async function getAllUsers() {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { data: profiles, error } = await supabase
@@ -38,6 +40,7 @@ export async function getAllUsers() {
 }
 
 export async function updateUserRole(id: string, role: ProfileRoles): Promise<string | null> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   const { error } = await supabase

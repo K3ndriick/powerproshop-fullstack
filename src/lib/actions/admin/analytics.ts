@@ -2,8 +2,10 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AnalyticsSummary } from "@/lib/types";
+import { requireAdmin } from "@/lib/auth/admin-check";
 
 export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
+  await requireAdmin();
   const supabase = createAdminClient();
 
   let currentDate = new Date();
