@@ -5,7 +5,8 @@
 // zodResolver is the bridge - it runs your zod schema when the form submits
 // and passes errors back to react-hook-form in the right format.
 
-import { useEffect } from 'react';
+/// <reference types="@types/google.maps" />
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -13,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { ShippingAddress } from '@/lib/types/order';
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
 // ============================================================
 // VALIDATION SCHEMA
@@ -50,11 +52,61 @@ export const ShippingAddressForm = ({ onSubmit, defaultValues }: Props) => {
     register,
     handleSubmit,
     reset,
+    setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<ShippingFormValues>({
     resolver: zodResolver(shippingSchema),
     defaultValues: { country: 'AU', ...defaultValues },
   })
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { ref: registerRef, ...rest } = register('address_line1');
+
+  useEffect(() => {
+    if (!inputRef.current) return;
+
+    setOptions({
+      key: process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY!,
+      v: 'weekly'
+    });
+
+    async function init() {
+      const { Autocomplete } = await importLibrary('places') as google.maps.PlacesLibrary;
+
+      const addressAutocomplete = new Autocomplete(inputRef.current!, {
+        types: ['address'],
+        componentRestrictions: { country: 'au' },
+        fields: ['address_components']
+      });
+      
+      addressAutocomplete.addListener('place_changed', () => {
+        const place = addressAutocomplete.getPlace();
+        console.log(place);
+        let streetNumber = '', route = '', city = '', state = '', postalCode = '', country = '';
+
+        for (const component of place.address_components) {
+          const type = component.types[0]
+          if (type === 'street_number') streetNumber = component.short_name
+          if (type === 'route') route = component.long_name
+          if (type === 'locality' || type === 'administrative_area_level_2') city = component.long_name
+          if (type === 'administrative_area_level_1') state = component.short_name
+          if (type === 'postal_code') postalCode = component.long_name
+          if (type === 'country') country = component.short_name
+        }
+        
+        reset({
+          ...getValues(),
+          address_line1: `${streetNumber} ${route}`.trim(),
+          city,
+          state,
+          postal_code: postalCode,
+          country,
+        })
+      }
+    )}
+    init()
+  }, [])
 
   // defaultValues arrive asynchronously (fetched after mount in the parent).
   // useForm only reads defaultValues on first render, so we reset whenever
@@ -95,7 +147,11 @@ export const ShippingAddressForm = ({ onSubmit, defaultValues }: Props) => {
         {/* Address line 1 */}
         <div className="md:col-span-2 space-y-1">
           <Label htmlFor="address_line1">Street Address</Label>
-          <Input id="address_line1" {...register('address_line1')} />
+          <Input id="address_line1" {...rest} ref={(el) => {
+            registerRef(el)
+            inputRef.current = el
+          }}
+          />
           {errors.address_line1 && <p className="text-sm text-destructive">{errors.address_line1.message}</p>}
         </div>
 
