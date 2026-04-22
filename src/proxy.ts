@@ -53,8 +53,16 @@
  *   /forgot-password
  */
 
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, '1 m'),
+  prefix: 'ratelimit:auth',
+});
 
 // Routes that require the user to be authenticated.
 // Any path that STARTS WITH one of these will be protected.
@@ -66,6 +74,24 @@ const protectedRoutes = ['/checkout', '/profile', '/orders', '/dashboard', '/adm
 const authRoutes = ['/login', '/signup', '/forgot-password'];
 
 export async function proxy(request: NextRequest) {
+
+  // --- Rate limiting (auth routes, POST only) ---
+  // Only POST requests carry credentials - GET just renders the form.
+  // Sliding window: 5 attempts per IP per minute before returning 429.
+  const { pathname } = request.nextUrl;
+  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
+
+  if (request.method === 'POST' && isAuthRoute) {
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      '127.0.0.1';
+    const { success } = await ratelimit.limit(ip);
+    if (!success) {
+      return new NextResponse('Too many requests. Please wait before trying again.', {
+        status: 429,
+      });
+    }
+  }
 
   // --- Supabase client setup ---
   //
@@ -112,10 +138,6 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   // --- Route protection ---
-  //
-  // Read the current path from the request URL.
-  // pathname is just the path segment, e.g. '/checkout' or '/profile/edit'
-  const { pathname } = request.nextUrl;
 
   // Protect private routes
   // If the user is NOT logged in AND they're trying to visit a protected route:
@@ -130,8 +152,6 @@ export async function proxy(request: NextRequest) {
 
   // Redirect authenticated users away from auth pages.
   // No point showing a login form to someone already logged in.
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
-
   if (isAuthRoute && user) {
     return NextResponse.redirect(new URL('/', request.nextUrl.origin));
   }
