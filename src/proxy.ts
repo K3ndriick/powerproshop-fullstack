@@ -53,16 +53,9 @@
  *   /forgot-password
  */
 
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, '1 m'),
-  prefix: 'ratelimit:auth',
-});
+import { authRatelimit } from '@/lib/ratelimit';
 
 // Routes that require the user to be authenticated.
 // Any path that STARTS WITH one of these will be protected.
@@ -85,7 +78,7 @@ export async function proxy(request: NextRequest) {
     const ip =
       request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
       '127.0.0.1';
-    const { success } = await ratelimit.limit(ip);
+    const { success } = await authRatelimit.limit(ip);
     if (!success) {
       return new NextResponse('Too many requests. Please wait before trying again.', {
         status: 429,

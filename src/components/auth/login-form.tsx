@@ -26,7 +26,7 @@
  */
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff } from 'lucide-react';
@@ -34,7 +34,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 
-import { useAuth } from '@/lib/auth/auth-context';
+import { loginAction } from '@/lib/auth/actions';
 import type { LoginFormData } from '@/lib/types';
 
 import { Button } from '@/components/ui/button';
@@ -68,8 +68,6 @@ const loginSchema = z.object({
 // =============================================================
 
 export function LoginForm() {
-  const { signIn } = useAuth();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -115,13 +113,13 @@ export function LoginForm() {
   //
 
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      await signIn(data.email, data.password);
-      toast.success('Welcome back!');
-      router.push(next);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to sign in');
+    const result = await loginAction(data.email, data.password);
+    if (result.error) {
+      toast.error(result.error);
+      return;
     }
+    toast.success('Welcome back!');
+    window.location.href = next;
   };
 
   // =============================================================
