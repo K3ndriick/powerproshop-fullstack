@@ -3,7 +3,7 @@ import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 import { useState, useEffect } from "react";
 
 
-export function useAddressAutocomplete(inputRef: React.RefObject<HTMLInputElement>) {
+export function useAddressAutocomplete(inputRef: React.RefObject<HTMLInputElement | null>) {
   const [address, setAddress] = useState({ address_line1: "", city: "", state: "", postal_code: "", country: "" });
 
   // listener
