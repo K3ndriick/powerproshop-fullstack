@@ -131,7 +131,7 @@ export const ShippingAddressForm = ({ onSubmit, defaultValues }: Props) => {
         {/* State */}
         <div className="space-y-1">
           <Label htmlFor="state">State (optional)</Label>
-          <Input id="state" {...stateField} />
+          <Input id="state" {...stateField} value={stateField.value ?? ''} />
         </div>
 
         {/* Postal code */}
