@@ -5,14 +5,16 @@
 // zodResolver is the bridge - it runs your zod schema when the form submits
 // and passes errors back to react-hook-form in the right format.
 
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+/// <reference types="@types/google.maps" />
+import { useEffect, useRef } from 'react';
+import { useController, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { ShippingAddress } from '@/lib/types/order';
+import { useAddressAutocomplete } from '@/lib/hooks/useAddressAutocomplete';
 
 // ============================================================
 // VALIDATION SCHEMA
@@ -20,10 +22,6 @@ import type { ShippingAddress } from '@/lib/types/order';
 // zod methods: z.string(), .min(n, 'message'), .email('message'), .optional()
 // ============================================================
 
-// Fill in the validation rules for each field
-// Reference: ShippingAddress type in lib/types/order.ts for the field names
-// Think about: what's the minimum length for a name? what makes an email valid?
-// For optional fields (address_line2, state) use z.string().optional()
 const shippingSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Enter a valid email'),
@@ -46,15 +44,29 @@ type Props = {
 }
 
 export const ShippingAddressForm = ({ onSubmit, defaultValues }: Props) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<ShippingFormValues>({
+  const { register, handleSubmit, reset, setValue, control, formState: { errors, isSubmitting } } = useForm<ShippingFormValues>({
     resolver: zodResolver(shippingSchema),
     defaultValues: { country: 'AU', ...defaultValues },
   })
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { ref: registerRef, ...rest } = register('address_line1');
+
+  const address = useAddressAutocomplete(inputRef);
+  const { field: cityField } = useController({ name: 'city', control });
+  const { field: stateField } = useController({ name: 'state', control });
+  const { field: postalCodeField } = useController({ name: 'postal_code', control });
+  const { field: countryField } = useController({ name: 'country', control });
+
+  useEffect(() => {
+    if (!address.address_line1) return;
+
+    setValue('address_line1', address.address_line1);
+    setValue('city', address.city);
+    setValue('state', address.state);
+    setValue('postal_code', address.postal_code);
+    setValue('country', address.country)
+  }, [address]);
 
   // defaultValues arrive asynchronously (fetched after mount in the parent).
   // useForm only reads defaultValues on first render, so we reset whenever
@@ -95,7 +107,11 @@ export const ShippingAddressForm = ({ onSubmit, defaultValues }: Props) => {
         {/* Address line 1 */}
         <div className="md:col-span-2 space-y-1">
           <Label htmlFor="address_line1">Street Address</Label>
-          <Input id="address_line1" {...register('address_line1')} />
+          <Input id="address_line1" {...rest} ref={(el) => {
+            registerRef(el)
+            inputRef.current = el
+          }}
+          />
           {errors.address_line1 && <p className="text-sm text-destructive">{errors.address_line1.message}</p>}
         </div>
 
@@ -108,27 +124,27 @@ export const ShippingAddressForm = ({ onSubmit, defaultValues }: Props) => {
         {/* City */}
         <div className="space-y-1">
           <Label htmlFor="city">City</Label>
-          <Input id="city" {...register('city')} />
+          <Input id="city" {...cityField} />
           {errors.city && <p className="text-sm text-destructive">{errors.city.message}</p>}
         </div>
 
         {/* State */}
         <div className="space-y-1">
           <Label htmlFor="state">State (optional)</Label>
-          <Input id="state" {...register('state')} />
+          <Input id="state" {...stateField} />
         </div>
 
         {/* Postal code */}
         <div className="space-y-1">
           <Label htmlFor="postal_code">Postal Code</Label>
-          <Input id="postal_code" {...register('postal_code')} />
+          <Input id="postal_code" {...postalCodeField} />
           {errors.postal_code && <p className="text-sm text-destructive">{errors.postal_code.message}</p>}
         </div>
 
         {/* Country */}
         <div className="space-y-1">
           <Label htmlFor="country">Country</Label>
-          <Input id="country" {...register('country')} />
+          <Input id="country" {...countryField} />
           {errors.country && <p className="text-sm text-destructive">{errors.country.message}</p>}
         </div>
 
